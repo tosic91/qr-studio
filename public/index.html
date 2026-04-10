@@ -116,6 +116,12 @@
             <div class="card-header">
               <h2 class="card-title">Customize Style</h2>
             </div>
+
+            <!-- Color Presets -->
+            <div class="form-group">
+              <label class="form-label">Color Theme</label>
+              <div class="preset-grid" id="color-presets"></div>
+            </div>
             
             <!-- Dot Style -->
             <div class="form-group">
@@ -129,26 +135,29 @@
               <div class="style-options" id="corner-styles"></div>
             </div>
 
-            <!-- Colors -->
+            <!-- Colors (manual override) -->
+            <div class="form-group" style="margin-top: var(--space-md);">
+              <label class="form-label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.6;">Manual Color Override</label>
+            </div>
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Foreground</label>
                 <div class="color-picker-group">
                   <div class="color-swatch">
-                    <input type="color" id="fg-color" value="#1e1e2e" onchange="updateQRPreview()">
+                    <input type="color" id="fg-color" value="#1a1a2e" onchange="currentPreset='custom'; document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active')); updateQRPreview()">
                   </div>
-                  <input type="text" class="form-control" value="#1e1e2e" style="flex:1;" 
-                         oninput="document.getElementById('fg-color').value=this.value; updateQRPreview();">
+                  <input type="text" class="form-control" value="#1a1a2e" style="flex:1;" 
+                         oninput="document.getElementById('fg-color').value=this.value; currentPreset='custom'; document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active')); updateQRPreview();">
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Background</label>
                 <div class="color-picker-group">
                   <div class="color-swatch">
-                    <input type="color" id="bg-color" value="#ffffff" onchange="updateQRPreview()">
+                    <input type="color" id="bg-color" value="#ffffff" onchange="currentPreset='custom'; document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active')); updateQRPreview()">
                   </div>
                   <input type="text" class="form-control" value="#ffffff" style="flex:1;"
-                         oninput="document.getElementById('bg-color').value=this.value; updateQRPreview();">
+                         oninput="document.getElementById('bg-color').value=this.value; currentPreset='custom'; document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active')); updateQRPreview();">
                 </div>
               </div>
             </div>
@@ -188,6 +197,7 @@
                 SVG
               </button>
             </div>
+            <p class="form-hint" style="text-align: center; margin-top: 6px;">Export: HD 1024 × 1024px</p>
             
             <!-- Save -->
             <button class="btn btn-primary btn-lg w-full mt-lg" id="save-btn" onclick="saveQR()">

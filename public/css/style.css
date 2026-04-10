@@ -1348,6 +1348,77 @@ select.form-control {
   }
 }
 
+/* ── Color Preset Grid ── */
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+
+.preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px 8px;
+  background: var(--bg-glass);
+  border: 1.5px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.preset-btn:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glass-hover);
+  transform: translateY(-1px);
+}
+
+.preset-btn.active {
+  border-color: var(--accent-primary);
+  background: var(--accent-subtle);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+  color: var(--text-primary);
+}
+
+.preset-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.preset-btn:hover .preset-swatch {
+  transform: scale(1.1);
+}
+
+.preset-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ── QR Preview Enhancement ── */
+.qr-preview-container canvas,
+.qr-preview-container svg {
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+  .preset-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .preset-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* ── Utility Classes ── */
 .text-center { text-align: center; }
 .text-right { text-align: right; }
@@ -1366,3 +1437,4 @@ select.form-control {
 .mb-lg { margin-bottom: var(--space-lg); }
 .w-full { width: 100%; }
 .hidden { display: none !important; }
+

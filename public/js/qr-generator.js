@@ -1,11 +1,16 @@
 /**
- * QR Generator UI Logic
+ * QR Generator UI Logic — Premium Edition
  * Uses qr-code-styling library for rich customization
  */
 
 let qrCodeInstance = null;
 let currentContentType = 'url';
-let currentQRType = 'dynamic'; // default to dynamic
+let currentQRType = 'dynamic';
+let currentPreset = 'classic';
+
+// ── Export size (HD) ──
+const EXPORT_SIZE = 1024;
+const PREVIEW_SIZE = 280;
 
 // ── Content Type Definitions ──
 const CONTENT_TYPES = {
@@ -18,12 +23,25 @@ const CONTENT_TYPES = {
   sms:   { icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>', label: 'SMS',   fields: ['phone', 'message'] },
 };
 
+// ── Premium Color Presets ──
+const COLOR_PRESETS = {
+  classic:  { name: 'Classic',   fg: '#1a1a2e', bg: '#ffffff', gradient: null, dot: 'rounded',  corner: 'extra-rounded' },
+  midnight: { name: 'Midnight',  fg: '#0f0f23', bg: '#ffffff', gradient: { type: 'linear', rotation: 135, colorStops: [{ offset: 0, color: '#667eea' }, { offset: 1, color: '#764ba2' }] }, dot: 'classy-rounded', corner: 'dot' },
+  ocean:    { name: 'Ocean',     fg: '#0c4a6e', bg: '#f0f9ff', gradient: { type: 'linear', rotation: 180, colorStops: [{ offset: 0, color: '#06b6d4' }, { offset: 1, color: '#3b82f6' }] }, dot: 'dots', corner: 'extra-rounded' },
+  sunset:   { name: 'Sunset',    fg: '#9a3412', bg: '#fffbeb', gradient: { type: 'linear', rotation: 45, colorStops: [{ offset: 0, color: '#f97316' }, { offset: 1, color: '#ec4899' }] }, dot: 'extra-rounded', corner: 'dot' },
+  forest:   { name: 'Forest',    fg: '#14532d', bg: '#f0fdf4', gradient: { type: 'linear', rotation: 135, colorStops: [{ offset: 0, color: '#22c55e' }, { offset: 1, color: '#0d9488' }] }, dot: 'rounded', corner: 'extra-rounded' },
+  neon:     { name: 'Neon',      fg: '#7c3aed', bg: '#faf5ff', gradient: { type: 'linear', rotation: 90, colorStops: [{ offset: 0, color: '#a855f7' }, { offset: 1, color: '#ec4899' }] }, dot: 'dots', corner: 'dot' },
+  monochrome:{ name: 'Mono',     fg: '#18181b', bg: '#fafafa', gradient: null, dot: 'square', corner: 'square' },
+  elegant:  { name: 'Elegant',   fg: '#1c1917', bg: '#fffbeb', gradient: { type: 'linear', rotation: 135, colorStops: [{ offset: 0, color: '#92400e' }, { offset: 1, color: '#78350f' }] }, dot: 'classy', corner: 'extra-rounded' },
+};
+
 const DOT_TYPES = ['square', 'dots', 'rounded', 'extra-rounded', 'classy', 'classy-rounded'];
 const CORNER_TYPES = ['square', 'dot', 'extra-rounded'];
 
 // ── Initialize Generator ──
 function initGenerator() {
   renderContentTypes();
+  renderColorPresets();
   renderStyleOptions();
   selectContentType('url');
   updateQRPreview();
@@ -36,6 +54,57 @@ function initGenerator() {
       currentQRType = btn.dataset.qrType;
     });
   });
+}
+
+// ── Render Color Presets ──
+function renderColorPresets() {
+  const container = document.getElementById('color-presets');
+  if (!container) return;
+
+  container.innerHTML = Object.entries(COLOR_PRESETS).map(([key, preset]) => {
+    const gradientStyle = preset.gradient 
+      ? `background: linear-gradient(${preset.gradient.rotation}deg, ${preset.gradient.colorStops.map(s => s.color).join(', ')})`
+      : `background: ${preset.fg}`;
+    return `
+      <button class="preset-btn ${key === 'classic' ? 'active' : ''}" data-preset="${key}" onclick="selectPreset('${key}')" title="${preset.name}">
+        <span class="preset-swatch" style="${gradientStyle}"></span>
+        <span class="preset-label">${preset.name}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+// ── Select Color Preset ──
+function selectPreset(key) {
+  currentPreset = key;
+  const preset = COLOR_PRESETS[key];
+  if (!preset) return;
+
+  // Update active button
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.preset === key);
+  });
+
+  // Update color inputs
+  const fgInput = document.getElementById('fg-color');
+  const bgInput = document.getElementById('bg-color');
+  const fgText = fgInput?.parentElement?.nextElementSibling;
+  const bgText = bgInput?.parentElement?.nextElementSibling;
+  
+  if (fgInput) fgInput.value = preset.fg;
+  if (bgInput) bgInput.value = preset.bg;
+  if (fgText) fgText.value = preset.fg;
+  if (bgText) bgText.value = preset.bg;
+
+  // Update dot/corner style
+  document.querySelectorAll('.dot-option').forEach(b => {
+    b.classList.toggle('active', b.dataset.value === preset.dot);
+  });
+  document.querySelectorAll('.corner-option').forEach(b => {
+    b.classList.toggle('active', b.dataset.value === preset.corner);
+  });
+
+  updateQRPreview();
 }
 
 // ── Render Content Type Selector ──
@@ -249,12 +318,62 @@ function buildQRString(type, content) {
 
 // ── Get Style Config ──
 function getStyleConfig() {
+  const preset = COLOR_PRESETS[currentPreset];
   return {
     dotType: document.querySelector('.dot-option.active')?.dataset.value || 'rounded',
     cornerType: document.querySelector('.corner-option.active')?.dataset.value || 'extra-rounded',
-    fgColor: document.getElementById('fg-color')?.value || '#1e1e2e',
+    fgColor: document.getElementById('fg-color')?.value || '#1a1a2e',
     bgColor: document.getElementById('bg-color')?.value || '#ffffff',
+    gradient: preset?.gradient || null,
+    preset: currentPreset,
   };
+}
+
+// ── Build QR Options ──
+function buildQROptions(qrString, style, size) {
+  const dotsOpts = { type: style.dotType };
+  if (style.gradient) {
+    dotsOpts.gradient = style.gradient;
+  } else {
+    dotsOpts.color = style.fgColor;
+  }
+
+  const cornersOpts = { type: style.cornerType };
+  if (style.gradient) {
+    cornersOpts.gradient = style.gradient;
+  } else {
+    cornersOpts.color = style.fgColor;
+  }
+
+  const cornersDotOpts = { type: style.cornerType === 'square' ? 'square' : 'dot' };
+  if (style.gradient) {
+    cornersDotOpts.gradient = style.gradient;
+  } else {
+    cornersDotOpts.color = style.fgColor;
+  }
+
+  const opts = {
+    width: size,
+    height: size,
+    data: qrString,
+    margin: Math.round(size * 0.04), // 4% margin for clean edges
+    dotsOptions: dotsOpts,
+    cornersSquareOptions: cornersOpts,
+    cornersDotOptions: cornersDotOpts,
+    backgroundOptions: {
+      color: style.bgColor,
+    },
+    imageOptions: {
+      crossOrigin: 'anonymous',
+      margin: Math.round(size * 0.02),
+      imageSize: 0.3,
+    },
+    qrOptions: {
+      errorCorrectionLevel: 'Q', // Higher quality for better scanning
+    },
+  };
+
+  return opts;
 }
 
 // ── Render Style Options ──
@@ -283,12 +402,16 @@ function renderStyleOptions() {
 function selectDotType(el, type) {
   document.querySelectorAll('.dot-option').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
+  currentPreset = 'custom';
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
   updateQRPreview();
 }
 
 function selectCornerType(el, type) {
   document.querySelectorAll('.corner-option').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
+  currentPreset = 'custom';
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
   updateQRPreview();
 }
 
@@ -321,56 +444,63 @@ function updateQRPreview() {
     logoUrl = URL.createObjectURL(logoInput.files[0]);
   }
 
-  const opts = {
-    width: 280,
-    height: 280,
-    data: qrString,
-    dotsOptions: {
-      color: style.fgColor,
-      type: style.dotType,
-    },
-    cornersSquareOptions: {
-      type: style.cornerType,
-      color: style.fgColor,
-    },
-    cornersDotOptions: {
-      type: style.cornerType === 'square' ? 'square' : 'dot',
-      color: style.fgColor,
-    },
-    backgroundOptions: {
-      color: style.bgColor,
-    },
-    imageOptions: {
-      crossOrigin: 'anonymous',
-      margin: 8,
-      imageSize: 0.35,
-    },
-    qrOptions: {
-      errorCorrectionLevel: 'M',
-    },
-  };
+  const opts = buildQROptions(qrString, style, PREVIEW_SIZE);
 
   if (logoUrl) {
     opts.image = logoUrl;
-    opts.qrOptions.errorCorrectionLevel = 'H'; // Higher error correction when using logo
+    opts.qrOptions.errorCorrectionLevel = 'H';
   }
 
   try {
     qrCodeInstance = new QRCodeStyling(opts);
     qrCodeInstance.append(container);
+
+    // Store current config for HD export
+    container._qrData = qrString;
+    container._qrStyle = style;
+    container._qrLogo = logoUrl;
   } catch (e) {
     console.error('QR generation error:', e);
     container.innerHTML = `<div class="qr-preview-placeholder"><span class="icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><p>Error generating QR code</p></div>`;
   }
 }
 
-// ── Download QR ──
+// ── Download QR (HD Export) ──
 function downloadQR(format) {
-  if (!qrCodeInstance) {
+  const container = document.getElementById('qr-preview');
+  if (!container || !container._qrData) {
     showToast('Generate a QR code first', 'error');
     return;
   }
-  qrCodeInstance.download({ name: 'qr-code', extension: format });
+
+  const style = container._qrStyle || getStyleConfig();
+  const qrString = container._qrData;
+  const logoUrl = container._qrLogo;
+
+  // Generate HD version for export
+  const hdOpts = buildQROptions(qrString, style, EXPORT_SIZE);
+
+  if (logoUrl) {
+    hdOpts.image = logoUrl;
+    hdOpts.qrOptions.errorCorrectionLevel = 'H';
+  }
+
+  // Determine filename
+  const titleInput = document.getElementById('qr-title');
+  const title = titleInput?.value || 'qr-code';
+  const filename = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'qr-code';
+
+  try {
+    const hdInstance = new QRCodeStyling(hdOpts);
+    hdInstance.download({ name: filename, extension: format });
+    showToast(`Downloaded ${format.toUpperCase()} (${EXPORT_SIZE}×${EXPORT_SIZE}px)`, 'success');
+  } catch (e) {
+    console.error('HD export error:', e);
+    // Fallback to preview size
+    if (qrCodeInstance) {
+      qrCodeInstance.download({ name: filename, extension: format });
+    }
+  }
 }
 
 // ── Save QR to Server ──
@@ -422,20 +552,13 @@ async function saveQR() {
       const container = document.getElementById('qr-preview');
       if (container) {
         container.innerHTML = '';
-        const style = getStyleConfig();
+        const opts = buildQROptions(redirectUrl, style, PREVIEW_SIZE);
         try {
-          qrCodeInstance = new QRCodeStyling({
-            width: 280,
-            height: 280,
-            data: redirectUrl,
-            dotsOptions: { color: style.fgColor, type: style.dotType },
-            cornersSquareOptions: { type: style.cornerType, color: style.fgColor },
-            cornersDotOptions: { type: style.cornerType === 'square' ? 'square' : 'dot', color: style.fgColor },
-            backgroundOptions: { color: style.bgColor },
-            imageOptions: { crossOrigin: 'anonymous', margin: 8, imageSize: 0.35 },
-            qrOptions: { errorCorrectionLevel: 'M' },
-          });
+          qrCodeInstance = new QRCodeStyling(opts);
           qrCodeInstance.append(container);
+          container._qrData = redirectUrl;
+          container._qrStyle = style;
+          container._qrLogo = null;
         } catch (e) {
           console.error('Re-render error:', e);
         }
