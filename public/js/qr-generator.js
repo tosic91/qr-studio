@@ -412,10 +412,34 @@ async function saveQR() {
 
     showToast('QR code saved successfully!', 'success');
     
-    // Show the short code for dynamic QR
+    // For dynamic QR, re-render preview with the actual redirect URL
+    // This ensures the QR the user downloads/scans is the SAME as on the dashboard
     if (data.qrCode.type === 'dynamic' && data.qrCode.shortCode) {
       const redirectUrl = `${window.location.origin}/r/${data.qrCode.shortCode}`;
       showToast(`Dynamic URL: ${redirectUrl}`, 'info');
+      
+      // Re-render QR with redirect URL so the preview matches the saved QR
+      const container = document.getElementById('qr-preview');
+      if (container) {
+        container.innerHTML = '';
+        const style = getStyleConfig();
+        try {
+          qrCodeInstance = new QRCodeStyling({
+            width: 280,
+            height: 280,
+            data: redirectUrl,
+            dotsOptions: { color: style.fgColor, type: style.dotType },
+            cornersSquareOptions: { type: style.cornerType, color: style.fgColor },
+            cornersDotOptions: { type: style.cornerType === 'square' ? 'square' : 'dot', color: style.fgColor },
+            backgroundOptions: { color: style.bgColor },
+            imageOptions: { crossOrigin: 'anonymous', margin: 8, imageSize: 0.35 },
+            qrOptions: { errorCorrectionLevel: 'M' },
+          });
+          qrCodeInstance.append(container);
+        } catch (e) {
+          console.error('Re-render error:', e);
+        }
+      }
     }
   } catch (err) {
     showToast(err.message, 'error');
