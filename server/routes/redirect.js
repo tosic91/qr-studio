@@ -53,10 +53,16 @@ router.get('/:code', async (req, res, next) => {
     qrService.incrementScanCount(qr.id).catch(err => console.error('Scan count error:', err));
 
     // Get the target URL from content
-    const targetUrl = qr.content.url || qr.content.text || '';
+    let targetUrl = qr.content.url || qr.content.text || '';
     
     if (!targetUrl) {
       return res.status(400).send('No redirect URL configured');
+    }
+
+    // Normalize URL — auto-prepend https:// if missing protocol
+    targetUrl = targetUrl.trim();
+    if (!/^https?:\/\//i.test(targetUrl)) {
+      targetUrl = 'https://' + targetUrl;
     }
 
     // 302 redirect (temporary, so browsers always check for updates)

@@ -165,11 +165,21 @@ function renderContentForm(type) {
   container.innerHTML = forms[type] || '';
 }
 
+// ── Normalize URL (auto-prepend https://) ──
+function normalizeUrl(url) {
+  if (!url) return '';
+  url = url.trim();
+  if (url && !/^https?:\/\//i.test(url)) {
+    url = 'https://' + url;
+  }
+  return url;
+}
+
 // ── Get QR Content Data ──
 function getQRContent() {
   switch (currentContentType) {
     case 'url':
-      return { url: document.getElementById('qr-url')?.value || '' };
+      return { url: normalizeUrl(document.getElementById('qr-url')?.value || '') };
     case 'text':
       return { text: document.getElementById('qr-text')?.value || '' };
     case 'wifi':
