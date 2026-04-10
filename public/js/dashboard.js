@@ -39,26 +39,47 @@ async function loadDashboard() {
   }
 }
 
+// ── SVG Icon Helpers ──
+const SVG_ICONS = {
+  link: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  text: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  wifi: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>',
+  user: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  mail: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>',
+  phone: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  message: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  file: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg>',
+  chart: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>',
+  calendar: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  pause: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>',
+  play: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+  download: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  copy: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  qr: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx="0.5"/></svg>',
+};
+
 // ── Get human-readable content summary ──
 function getContentSummary(qr) {
   const content = qr.content || {};
   switch (qr.contentType) {
     case 'url':
-      return { icon: '🔗', text: content.url || 'No URL', isLink: true, url: content.url };
+      return { icon: SVG_ICONS.link, text: content.url || 'No URL', isLink: true, url: content.url };
     case 'text':
-      return { icon: '📝', text: content.text || 'No text', isLink: false };
+      return { icon: SVG_ICONS.text, text: content.text || 'No text', isLink: false };
     case 'wifi':
-      return { icon: '📶', text: `WiFi: ${content.ssid || 'Unknown'}`, isLink: false };
+      return { icon: SVG_ICONS.wifi, text: `WiFi: ${content.ssid || 'Unknown'}`, isLink: false };
     case 'vcard':
-      return { icon: '👤', text: `${content.firstName || ''} ${content.lastName || ''}`.trim() || 'vCard', isLink: false };
+      return { icon: SVG_ICONS.user, text: `${content.firstName || ''} ${content.lastName || ''}`.trim() || 'vCard', isLink: false };
     case 'email':
-      return { icon: '✉️', text: content.address || 'No email', isLink: false };
+      return { icon: SVG_ICONS.mail, text: content.address || 'No email', isLink: false };
     case 'phone':
-      return { icon: '📞', text: content.phone || 'No phone', isLink: false };
+      return { icon: SVG_ICONS.phone, text: content.phone || 'No phone', isLink: false };
     case 'sms':
-      return { icon: '💬', text: content.phone || 'No phone', isLink: false };
+      return { icon: SVG_ICONS.message, text: content.phone || 'No phone', isLink: false };
     default:
-      return { icon: '📄', text: JSON.stringify(content).slice(0, 60), isLink: false };
+      return { icon: SVG_ICONS.file, text: JSON.stringify(content).slice(0, 60), isLink: false };
   }
 }
 
@@ -69,7 +90,7 @@ function renderQRList(qrCodes) {
   if (!qrCodes.length) {
     container.innerHTML = `
       <div class="empty-state">
-        <div class="icon">📱</div>
+        <div class="icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx="0.5"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg></div>
         <h3>No QR codes yet</h3>
         <p>Create your first QR code to get started</p>
         <a href="/#generator" class="btn btn-primary mt-lg">Create QR Code</a>
@@ -99,20 +120,20 @@ function renderQRList(qrCodes) {
           <div class="qr-item-meta">
             <span class="badge ${typeBadge}">${typeLabel}</span>
             <span class="badge ${activeBadge}">${activeLabel}</span>
-            <span>📊 ${qr.scanCount || 0} scans</span>
-            <span>📅 ${dateStr}</span>
+            <span>${SVG_ICONS.chart} ${qr.scanCount || 0} scans</span>
+            <span>${SVG_ICONS.calendar} ${dateStr}</span>
           </div>
           <div class="qr-item-content mt-sm">${contentDisplay}</div>
         </div>
         <div class="qr-item-actions">
           ${qr.type === 'dynamic' ? `
-            <button class="btn btn-secondary btn-sm" onclick="openEditModal(${qr.id})" title="Edit">✏️ Edit</button>
-            <button class="btn btn-secondary btn-sm" onclick="openAnalytics(${qr.id})" title="Analytics">📊</button>
+            <button class="btn btn-secondary btn-sm" onclick="openEditModal(${qr.id})" title="Edit">${SVG_ICONS.edit} Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="openAnalytics(${qr.id})" title="Analytics">${SVG_ICONS.chart}</button>
             <button class="btn btn-secondary btn-sm" onclick="toggleQR(${qr.id})" title="Toggle active">
-              ${qr.isActive ? '⏸️' : '▶️'}
+              ${qr.isActive ? SVG_ICONS.pause : SVG_ICONS.play}
             </button>
           ` : ''}
-          <button class="btn btn-danger btn-sm" onclick="deleteQR(${qr.id})" title="Delete">🗑️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteQR(${qr.id})" title="Delete">${SVG_ICONS.trash}</button>
         </div>
       </div>
     `;
@@ -167,7 +188,7 @@ function renderThumbnail(qr) {
     });
     qrCode.append(container);
   } catch (e) {
-    container.textContent = '📱';
+    container.innerHTML = SVG_ICONS.qr;
   }
 }
 
@@ -211,7 +232,7 @@ function openPreviewModal(id) {
     metaHtml += `
       <div class="preview-info-row">
         <span class="preview-label">Redirect URL</span>
-        <span class="preview-value preview-redirect-url" title="Click to copy" onclick="copyToClipboard('${redirectUrl}')">${redirectUrl} 📋</span>
+        <span class="preview-value preview-redirect-url" title="Click to copy" onclick="copyToClipboard('${redirectUrl}')">${redirectUrl} ${SVG_ICONS.copy}</span>
       </div>
     `;
   }
@@ -219,7 +240,7 @@ function openPreviewModal(id) {
   metaHtml += `
     <div class="preview-info-row">
       <span class="preview-label">Scans</span>
-      <span class="preview-value">📊 ${qr.scanCount || 0}</span>
+      <span class="preview-value">${SVG_ICONS.chart} ${qr.scanCount || 0}</span>
     </div>
     <div class="preview-info-row">
       <span class="preview-label">Created</span>
@@ -509,8 +530,13 @@ async function openAnalytics(id) {
         <div class="card-header"><h3 class="card-title" style="font-size: var(--font-md);">Devices</h3></div>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
           ${data.scansByDevice.map(d => {
-            const icons = { mobile: '📱', desktop: '💻', tablet: '📱', unknown: '❓' };
-            return `<span class="badge badge-dynamic" style="padding: 6px 12px; font-size: 13px;">${icons[d.device] || '❓'} ${d.device}: ${d.count}</span>`;
+            const deviceIcons = {
+              mobile: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+              desktop: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+              tablet: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+              unknown: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+            };
+            return `<span class="badge badge-dynamic" style="padding: 6px 12px; font-size: 13px;">${deviceIcons[d.device] || deviceIcons.unknown} ${d.device}: ${d.count}</span>`;
           }).join('')}
         </div>
       `;
@@ -534,7 +560,7 @@ async function openAnalytics(id) {
     if (data.totalScans === 0) {
       html += `
         <div class="empty-state" style="padding: 2rem 0;">
-          <div class="icon">📊</div>
+           <div class="icon">${SVG_ICONS.chart}</div>
           <p>No scans yet. Share your QR code to start tracking!</p>
         </div>
       `;
