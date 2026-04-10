@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — QR Studio</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📲</text></svg>">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="navbar-brand">
+        <span class="logo-icon">⚡</span>
+        <span>QR Studio</span>
+      </a>
+      <ul class="navbar-nav" id="auth-nav"></ul>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="container">
+      <!-- Stats -->
+      <div class="stats-grid stagger" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-label">Total QR Codes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-dynamic">—</div>
+          <div class="stat-label">Dynamic QR Codes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-scans">—</div>
+          <div class="stat-label">Total Scans</div>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="dashboard-header">
+        <h1>My QR Codes</h1>
+        <a href="/#generator" class="btn btn-primary">+ Create New</a>
+      </div>
+
+      <!-- QR List -->
+      <div id="qr-list" class="qr-list">
+        <div class="empty-state" id="loading-state">
+          <div class="spinner" style="margin: 0 auto;"></div>
+          <p class="mt-md">Loading your QR codes...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay hidden" id="edit-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Edit QR Code</h2>
+        <button class="btn btn-icon btn-ghost" onclick="closeEditModal()">✕</button>
+      </div>
+      <div id="edit-form-content"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+        <button class="btn btn-primary" id="edit-save-btn" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Modal -->
+  <div class="modal-overlay hidden" id="analytics-modal">
+    <div class="modal" style="max-width: 680px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="analytics-title">Analytics</h2>
+        <button class="btn btn-icon btn-ghost" onclick="closeAnalyticsModal()">✕</button>
+      </div>
+      <div id="analytics-content">
+        <div class="text-center"><div class="spinner" style="margin: 0 auto;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/qr-code-styling@1.8.4/lib/qr-code-styling.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

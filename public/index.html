@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create stunning QR codes with dynamic links, custom styles, and real-time analytics. Change your QR destination anytime without reprinting.">
+  <title>QR Studio — Dynamic QR Code Generator</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📲</text></svg>">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="navbar-brand">
+        <span class="logo-icon">⚡</span>
+        <span>QR Studio</span>
+      </a>
+      <ul class="navbar-nav" id="auth-nav">
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register" class="btn btn-primary btn-sm">Sign Up</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title fade-in-up">
+        Create <span class="gradient-text">Dynamic</span><br>QR Codes
+      </h1>
+      <p class="hero-subtitle fade-in-up" style="animation-delay: 100ms;">
+        Generate beautiful, customizable QR codes with real-time analytics.
+        Change your destination URL anytime — no need to reprint.
+      </p>
+      <div class="fade-in-up" style="animation-delay: 200ms;">
+        <a href="#generator" class="btn btn-primary btn-lg">Create QR Code ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Generator Section -->
+  <section id="generator" class="page">
+    <div class="container">
+      <div class="generator-layout">
+        
+        <!-- Left: Config Panel -->
+        <div class="generator-config">
+          <!-- QR Type Toggle -->
+          <div class="card mb-lg fade-in-up">
+            <div class="card-header">
+              <h2 class="card-title">QR Type</h2>
+              <p class="card-subtitle">Dynamic QR codes let you change the link anytime</p>
+            </div>
+            <div style="display: flex; gap: var(--space-sm);">
+              <button class="style-option active" data-qr-type="dynamic" style="flex:1; padding: 0.75rem;">
+                ⚡ Dynamic
+              </button>
+              <button class="style-option" data-qr-type="static" style="flex:1; padding: 0.75rem;">
+                🔒 Static
+              </button>
+            </div>
+          </div>
+          
+          <!-- Content Type -->
+          <div class="card mb-lg fade-in-up" style="animation-delay: 60ms;">
+            <div class="card-header">
+              <h2 class="card-title">Content Type</h2>
+              <p class="card-subtitle">Select what your QR code will contain</p>
+            </div>
+            <div class="content-types" id="content-types"></div>
+          </div>
+
+          <!-- Content Form -->
+          <div class="card mb-lg fade-in-up" style="animation-delay: 120ms;">
+            <div class="card-header">
+              <h2 class="card-title">Content</h2>
+            </div>
+            <div id="content-form"></div>
+            <div class="form-group">
+              <label class="form-label">QR Code Name</label>
+              <input type="text" class="form-control" id="qr-title" placeholder="My QR Code">
+            </div>
+          </div>
+
+          <!-- Style Options -->
+          <div class="card fade-in-up" style="animation-delay: 180ms;">
+            <div class="card-header">
+              <h2 class="card-title">Customize Style</h2>
+            </div>
+            
+            <!-- Dot Style -->
+            <div class="form-group">
+              <label class="form-label">Dot Style</label>
+              <div class="style-options" id="dot-styles"></div>
+            </div>
+            
+            <!-- Corner Style -->
+            <div class="form-group">
+              <label class="form-label">Corner Style</label>
+              <div class="style-options" id="corner-styles"></div>
+            </div>
+
+            <!-- Colors -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Foreground</label>
+                <div class="color-picker-group">
+                  <div class="color-swatch">
+                    <input type="color" id="fg-color" value="#1e1e2e" onchange="updateQRPreview()">
+                  </div>
+                  <input type="text" class="form-control" value="#1e1e2e" style="flex:1;" 
+                         oninput="document.getElementById('fg-color').value=this.value; updateQRPreview();">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Background</label>
+                <div class="color-picker-group">
+                  <div class="color-swatch">
+                    <input type="color" id="bg-color" value="#ffffff" onchange="updateQRPreview()">
+                  </div>
+                  <input type="text" class="form-control" value="#ffffff" style="flex:1;"
+                         oninput="document.getElementById('bg-color').value=this.value; updateQRPreview();">
+                </div>
+              </div>
+            </div>
+
+            <!-- Logo Upload -->
+            <div class="form-group">
+              <label class="form-label">Logo (optional)</label>
+              <input type="file" class="form-control" id="qr-logo" accept="image/*" onchange="updateQRPreview()">
+              <p class="form-hint">Upload a logo to embed in the center of your QR code</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Preview Sidebar -->
+        <div class="generator-sidebar">
+          <div class="card" style="position: sticky; top: 80px;">
+            <div class="card-header">
+              <h2 class="card-title">Preview</h2>
+            </div>
+            <div class="qr-preview-container" id="qr-preview">
+              <div class="qr-preview-placeholder">
+                <span class="icon">📱</span>
+                <p>Enter content to generate<br>your QR code preview</p>
+              </div>
+            </div>
+            
+            <!-- Download -->
+            <div class="download-actions">
+              <button class="btn btn-secondary w-full" onclick="downloadQR('png')">
+                📥 PNG
+              </button>
+              <button class="btn btn-secondary w-full" onclick="downloadQR('svg')">
+                📐 SVG
+              </button>
+            </div>
+            
+            <!-- Save -->
+            <button class="btn btn-primary btn-lg w-full mt-lg" id="save-btn" onclick="saveQR()">
+              💾 Save QR Code
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: var(--font-sm); border-top: 1px solid var(--border-glass);">
+    <div class="container">
+      <p>QR Studio — Dynamic QR Code Generator</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/qr-code-styling@1.8.4/lib/qr-code-styling.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/qr-generator.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      initGenerator();
+      const user = await checkAuth();
+      updateNavForAuth(user);
+    });
+  </script>
+</body>
+</html>
