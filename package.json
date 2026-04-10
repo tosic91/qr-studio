@@ -5,8 +5,8 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "node --watch server/index.js",
-    "migrate": "knex migrate:latest",
+    "dev": "node server/index.js",
+    "migrate": "knex migrate:latest --env production",
     "migrate:rollback": "knex migrate:rollback",
     "seed": "knex seed:run"
   },
