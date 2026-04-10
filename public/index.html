@@ -6,14 +6,23 @@
   <meta name="description" content="Create stunning QR codes with dynamic links, custom styles, and real-time analytics. Change your QR destination anytime without reprinting.">
   <title>QR Studio — Dynamic QR Code Generator</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📲</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23818CF8'/%3E%3Crect x='6' y='6' width='8' height='8' rx='1.5' fill='white'/%3E%3Crect x='18' y='6' width='8' height='8' rx='1.5' fill='white'/%3E%3Crect x='6' y='18' width='8' height='8' rx='1.5' fill='white'/%3E%3Crect x='20' y='20' width='4' height='4' rx='1' fill='white'/%3E%3C/svg%3E">
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
     <div class="container">
       <a href="/" class="navbar-brand">
-        <span class="logo-icon">⚡</span>
+        <span class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="3" height="3" rx="0.5"/>
+            <line x1="21" y1="14" x2="21" y2="21"/>
+            <line x1="14" y1="21" x2="21" y2="21"/>
+          </svg>
+        </span>
         <span>QR Studio</span>
       </a>
       <ul class="navbar-nav" id="auth-nav">
@@ -29,12 +38,29 @@
       <h1 class="hero-title fade-in-up">
         Create <span class="gradient-text">Dynamic</span><br>QR Codes
       </h1>
-      <p class="hero-subtitle fade-in-up" style="animation-delay: 100ms;">
+      <p class="hero-subtitle fade-in-up" style="animation-delay: 80ms;">
         Generate beautiful, customizable QR codes with real-time analytics.
         Change your destination URL anytime — no need to reprint.
       </p>
-      <div class="fade-in-up" style="animation-delay: 200ms;">
-        <a href="#generator" class="btn btn-primary btn-lg">Create QR Code ↓</a>
+      <div class="hero-features fade-in-up" style="animation-delay: 150ms;">
+        <div class="feature-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Dynamic Links
+        </div>
+        <div class="feature-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          Real-time Analytics
+        </div>
+        <div class="feature-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17.5 15.5a5 5 0 0 0-10 0"/><circle cx="8" cy="13" r="2"/><path d="M3 21a4 4 0 0 1 7.5-1.8"/><path d="M20 21a4 4 0 0 0-3-3.85"/></svg>
+          Free Forever
+        </div>
+      </div>
+      <div class="fade-in-up" style="animation-delay: 220ms;">
+        <a href="#generator" class="btn btn-primary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx="0.5"/></svg>
+          Create QR Code
+        </a>
       </div>
     </div>
   </section>
@@ -54,10 +80,12 @@
             </div>
             <div style="display: flex; gap: var(--space-sm);">
               <button class="style-option active" data-qr-type="dynamic" style="flex:1; padding: 0.75rem;">
-                ⚡ Dynamic
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Dynamic
               </button>
               <button class="style-option" data-qr-type="static" style="flex:1; padding: 0.75rem;">
-                🔒 Static
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Static
               </button>
             </div>
           </div>
@@ -142,7 +170,9 @@
             </div>
             <div class="qr-preview-container" id="qr-preview">
               <div class="qr-preview-placeholder">
-                <span class="icon">📱</span>
+                <span class="icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx="0.5"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg>
+                </span>
                 <p>Enter content to generate<br>your QR code preview</p>
               </div>
             </div>
@@ -150,16 +180,19 @@
             <!-- Download -->
             <div class="download-actions">
               <button class="btn btn-secondary w-full" onclick="downloadQR('png')">
-                📥 PNG
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                PNG
               </button>
               <button class="btn btn-secondary w-full" onclick="downloadQR('svg')">
-                📐 SVG
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 12V5a2 2 0 0 1 2-2h7l5 5v4"/><path d="M3 15l3 6 3-6"/><path d="m17 18 2-2-2-2"/><path d="m13 14-2 2 2 2"/></svg>
+                SVG
               </button>
             </div>
             
             <!-- Save -->
             <button class="btn btn-primary btn-lg w-full mt-lg" id="save-btn" onclick="saveQR()">
-              💾 Save QR Code
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save QR Code
             </button>
           </div>
         </div>
@@ -168,7 +201,7 @@
   </section>
 
   <!-- Footer -->
-  <footer style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: var(--font-sm); border-top: 1px solid var(--border-glass);">
+  <footer class="footer">
     <div class="container">
       <p>QR Studio — Dynamic QR Code Generator</p>
     </div>
