@@ -7,6 +7,7 @@
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "migrate": "knex migrate:latest --env production",
+    "migrate:dev": "knex migrate:latest --env development",
     "migrate:rollback": "knex migrate:rollback",
     "seed": "knex seed:run"
   },

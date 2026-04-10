@@ -1,9 +1,12 @@
-require('dotenv').config();
+// Only load dotenv in development (Railway injects env vars directly)
+try { require('dotenv').config(); } catch(e) {}
+
+const connection = process.env.DATABASE_URL;
 
 module.exports = {
   development: {
     client: 'pg',
-    connection: process.env.DATABASE_URL,
+    connection: connection,
     migrations: {
       directory: './migrations'
     },
@@ -14,8 +17,8 @@ module.exports = {
   production: {
     client: 'pg',
     connection: {
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      connectionString: connection,
+      ssl: { rejectUnauthorized: false }
     },
     migrations: {
       directory: './migrations'
