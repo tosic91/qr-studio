@@ -1084,3 +1084,127 @@ select.form-control {
 .mb-lg { margin-bottom: var(--space-lg); }
 .w-full { width: 100%; }
 .hidden { display: none !important; }
+
+/* ── QR Item Content Display ── */
+.qr-item-content {
+  font-size: 12px;
+}
+
+.qr-content-link {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) ease;
+  word-break: break-all;
+}
+
+.qr-content-link:hover {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+}
+
+.qr-content-text {
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+/* ── QR Item Thumbnail clickable ── */
+.qr-item-thumb {
+  cursor: pointer;
+  transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) ease;
+  border-radius: var(--radius-md);
+}
+
+.qr-item-thumb:hover {
+  transform: scale(1.12);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+}
+
+/* ── QR Preview Modal ── */
+.preview-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg) 0;
+}
+
+.preview-qr-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+  min-width: 300px;
+  min-height: 300px;
+}
+
+.preview-qr-container canvas,
+.preview-qr-container svg {
+  display: block;
+  max-width: 100%;
+}
+
+.preview-download-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.preview-meta {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.preview-info-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-glass);
+  gap: var(--space-md);
+}
+
+.preview-info-row:last-child {
+  border-bottom: none;
+}
+
+.preview-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 90px;
+}
+
+.preview-value {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: right;
+  word-break: break-all;
+}
+
+.preview-link {
+  font-size: 13px;
+  color: var(--accent-primary);
+  text-decoration: none;
+  text-align: right;
+  word-break: break-all;
+  transition: color var(--duration-fast) ease;
+}
+
+.preview-link:hover {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+}
+
+.preview-redirect-url {
+  cursor: pointer;
+  transition: color var(--duration-fast) ease;
+}
+
+.preview-redirect-url:hover {
+  color: var(--accent-primary);
+}
+

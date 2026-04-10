@@ -81,6 +81,24 @@
     </div>
   </div>
 
+  <!-- QR Preview Modal -->
+  <div class="modal-overlay hidden" id="preview-modal">
+    <div class="modal" style="max-width: 520px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="preview-title">QR Code Preview</h2>
+        <button class="btn btn-icon btn-ghost" onclick="closePreviewModal()">✕</button>
+      </div>
+      <div class="preview-body">
+        <div id="preview-qr-container" class="preview-qr-container"></div>
+        <div class="preview-download-actions">
+          <button class="btn btn-secondary btn-sm" onclick="downloadPreviewQR('png')">📥 PNG</button>
+          <button class="btn btn-secondary btn-sm" onclick="downloadPreviewQR('svg')">📐 SVG</button>
+        </div>
+        <div id="preview-meta" class="preview-meta"></div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/qr-code-styling@1.8.4/lib/qr-code-styling.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/dashboard.js"></script>

@@ -39,6 +39,29 @@ async function loadDashboard() {
   }
 }
 
+// ── Get human-readable content summary ──
+function getContentSummary(qr) {
+  const content = qr.content || {};
+  switch (qr.contentType) {
+    case 'url':
+      return { icon: '🔗', text: content.url || 'No URL', isLink: true, url: content.url };
+    case 'text':
+      return { icon: '📝', text: content.text || 'No text', isLink: false };
+    case 'wifi':
+      return { icon: '📶', text: `WiFi: ${content.ssid || 'Unknown'}`, isLink: false };
+    case 'vcard':
+      return { icon: '👤', text: `${content.firstName || ''} ${content.lastName || ''}`.trim() || 'vCard', isLink: false };
+    case 'email':
+      return { icon: '✉️', text: content.address || 'No email', isLink: false };
+    case 'phone':
+      return { icon: '📞', text: content.phone || 'No phone', isLink: false };
+    case 'sms':
+      return { icon: '💬', text: content.phone || 'No phone', isLink: false };
+    default:
+      return { icon: '📄', text: JSON.stringify(content).slice(0, 60), isLink: false };
+  }
+}
+
 // ── Render QR List ──
 function renderQRList(qrCodes) {
   const container = document.getElementById('qr-list');
@@ -61,11 +84,16 @@ function renderQRList(qrCodes) {
     const activeBadge = qr.isActive ? 'badge-active' : 'badge-inactive';
     const activeLabel = qr.isActive ? 'Active' : 'Inactive';
     const dateStr = new Date(qr.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const redirectUrl = qr.shortCode ? `${window.location.origin}/r/${qr.shortCode}` : '';
+    
+    // Get actual content summary instead of redirect URL
+    const summary = getContentSummary(qr);
+    const contentDisplay = summary.isLink
+      ? `<a href="${escapeHtml(summary.url)}" target="_blank" rel="noopener noreferrer" class="qr-content-link" title="Open in new tab">${summary.icon} ${escapeHtml(truncateUrl(summary.text, 50))}</a>`
+      : `<span class="qr-content-text">${summary.icon} ${escapeHtml(summary.text.length > 60 ? summary.text.slice(0, 60) + '…' : summary.text)}</span>`;
 
     return `
       <div class="qr-item fade-in-up" data-id="${qr.id}">
-        <div class="qr-item-thumb" id="thumb-${qr.id}"></div>
+        <div class="qr-item-thumb" id="thumb-${qr.id}" onclick="openPreviewModal(${qr.id})" title="Click to preview full size"></div>
         <div class="qr-item-info">
           <div class="qr-item-title">${escapeHtml(qr.title || 'Untitled')}</div>
           <div class="qr-item-meta">
@@ -74,7 +102,7 @@ function renderQRList(qrCodes) {
             <span>📊 ${qr.scanCount || 0} scans</span>
             <span>📅 ${dateStr}</span>
           </div>
-          ${redirectUrl ? `<div class="qr-item-meta mt-sm" style="font-size: 11px;"><span style="color: var(--accent-primary); user-select: all;">🔗 ${redirectUrl}</span></div>` : ''}
+          <div class="qr-item-content mt-sm">${contentDisplay}</div>
         </div>
         <div class="qr-item-actions">
           ${qr.type === 'dynamic' ? `
@@ -94,6 +122,15 @@ function renderQRList(qrCodes) {
   qrCodes.forEach(qr => {
     renderThumbnail(qr);
   });
+}
+
+// ── Truncate URL for display ──
+function truncateUrl(url, max) {
+  if (!url || url.length <= max) return url;
+  // Remove protocol for display
+  const clean = url.replace(/^https?:\/\//, '');
+  if (clean.length <= max) return clean;
+  return clean.slice(0, max) + '…';
 }
 
 // ── Render QR Thumbnail ──
@@ -132,6 +169,135 @@ function renderThumbnail(qr) {
   } catch (e) {
     container.textContent = '📱';
   }
+}
+
+// ── QR Preview Modal ──
+function openPreviewModal(id) {
+  const qr = allQRCodes.find(q => q.id === id);
+  if (!qr) return;
+
+  const modal = document.getElementById('preview-modal');
+  const previewContainer = document.getElementById('preview-qr-container');
+  const previewTitle = document.getElementById('preview-title');
+  const previewMeta = document.getElementById('preview-meta');
+  
+  previewTitle.textContent = qr.title || 'Untitled QR Code';
+  
+  // Build meta info
+  const summary = getContentSummary(qr);
+  const redirectUrl = qr.shortCode ? `${window.location.origin}/r/${qr.shortCode}` : '';
+  
+  let metaHtml = `
+    <div class="preview-info-row">
+      <span class="preview-label">Type</span>
+      <span class="badge ${qr.type === 'dynamic' ? 'badge-dynamic' : 'badge-static'}">${qr.type === 'dynamic' ? 'Dynamic' : 'Static'}</span>
+    </div>
+    <div class="preview-info-row">
+      <span class="preview-label">Content</span>
+      <span class="preview-value">${summary.icon} ${escapeHtml(summary.text)}</span>
+    </div>
+  `;
+  
+  if (summary.isLink && summary.url) {
+    metaHtml += `
+      <div class="preview-info-row">
+        <span class="preview-label">Destination</span>
+        <a href="${escapeHtml(summary.url)}" target="_blank" rel="noopener noreferrer" class="preview-link">${escapeHtml(summary.url)} ↗</a>
+      </div>
+    `;
+  }
+  
+  if (redirectUrl) {
+    metaHtml += `
+      <div class="preview-info-row">
+        <span class="preview-label">Redirect URL</span>
+        <span class="preview-value preview-redirect-url" title="Click to copy" onclick="copyToClipboard('${redirectUrl}')">${redirectUrl} 📋</span>
+      </div>
+    `;
+  }
+  
+  metaHtml += `
+    <div class="preview-info-row">
+      <span class="preview-label">Scans</span>
+      <span class="preview-value">📊 ${qr.scanCount || 0}</span>
+    </div>
+    <div class="preview-info-row">
+      <span class="preview-label">Created</span>
+      <span class="preview-value">${new Date(qr.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+    </div>
+  `;
+  
+  previewMeta.innerHTML = metaHtml;
+  
+  // Render large QR code
+  previewContainer.innerHTML = '';
+  const style = qr.styleConfig || {};
+  let qrString;
+  
+  if (qr.type === 'dynamic' && qr.shortCode) {
+    qrString = `${window.location.origin}/r/${qr.shortCode}`;
+  } else {
+    qrString = buildQRStringFromContent(qr.contentType, qr.content);
+  }
+
+  try {
+    const qrCode = new QRCodeStyling({
+      width: 300,
+      height: 300,
+      data: qrString || 'https://example.com',
+      dotsOptions: {
+        color: style.fgColor || '#1e1e2e',
+        type: style.dotType || 'rounded',
+      },
+      cornersSquareOptions: {
+        type: style.cornerType || 'extra-rounded',
+        color: style.fgColor || '#1e1e2e',
+      },
+      backgroundOptions: {
+        color: style.bgColor || '#ffffff',
+      },
+      qrOptions: { errorCorrectionLevel: 'M' },
+      imageOptions: { crossOrigin: 'anonymous', margin: 10 },
+    });
+    
+    // Store reference for download
+    window._previewQR = qrCode;
+    qrCode.append(previewContainer);
+  } catch (e) {
+    previewContainer.innerHTML = '<p style="color: var(--text-muted);">Failed to render QR code</p>';
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function closePreviewModal() {
+  document.getElementById('preview-modal').classList.add('hidden');
+  window._previewQR = null;
+}
+
+async function downloadPreviewQR(format) {
+  if (!window._previewQR) return;
+  try {
+    await window._previewQR.download({ name: 'qr-code', extension: format });
+    showToast(`Downloaded as ${format.toUpperCase()}`, 'success');
+  } catch (e) {
+    showToast('Download failed', 'error');
+  }
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard!', 'success');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    showToast('Copied to clipboard!', 'success');
+  });
 }
 
 // ── Build QR string from saved data ──
@@ -389,6 +555,7 @@ document.addEventListener('click', (e) => {
   if (e.target.classList.contains('modal-overlay')) {
     closeEditModal();
     closeAnalyticsModal();
+    closePreviewModal();
   }
 });
 
@@ -397,6 +564,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeEditModal();
     closeAnalyticsModal();
+    closePreviewModal();
   }
 });
 
