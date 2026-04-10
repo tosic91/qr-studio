@@ -5,6 +5,11 @@ const config = require('./config');
 
 const app = express();
 
+// ── Trust proxy (Railway uses reverse proxy) ──
+if (config.isProd) {
+  app.set('trust proxy', 1);
+}
+
 // ── Body parsing ──
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -17,6 +22,7 @@ app.use(session({
   cookie: {
     secure: config.isProd,
     httpOnly: true,
+    sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   }
 }));
